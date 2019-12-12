@@ -1,0 +1,6 @@
+---
+# handlers file for ssh
+- name: remove temp ssh folder
+  file: 
+    path: /tmp/ssh
+    state: absent

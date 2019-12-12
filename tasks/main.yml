@@ -1,0 +1,54 @@
+---
+- name: creating .ssh directory 
+  file:
+    path: /etc/skel/.ssh
+    state: directory
+    mode: 0700
+
+- name: create .ssh skel
+  file:
+    path: /etc/skel/.ssh/authorized_keys
+    owner: root
+    group: root
+    mode: 0600
+    state: touch
+      
+- name: adding group admin and users
+  group:
+    name: "{{ item.name }}"
+    gid: "{{ item.gid }}"
+    state: present
+  with_items: "{{ systemgroups }}" 
+
+- name: adding users admin and users
+  user:
+    name: "{{ item.name }}"
+    group: "{{ item.group }}"
+    comment: "{{ item.comment }}"
+    state: present
+  with_items: "{{ systemusers }}"
+
+- name: creating custom sudoers for admin
+  file:
+    path: /etc/sudoers.d/91-admin
+    owner: root
+    group: root
+    mode: 0644
+    state: touch
+
+- name: enable admin group sudo access
+  lineinfile:
+    dest: /etc/sudoers.d/91-admin
+    line: "%mms ALL=(ALL) NOPASSWD:ALL"
+
+- name: copying public keys to authorized key files
+  copy:
+    src: "{{ item }}"
+    dest: "/tmp/ssh"
+  with_fileglob:
+        - "*.pub"
+
+- name: copying ssh key for system users
+  shell: "cat /tmp/ssh/{{item.name}}.pub > /home/{{item.name}}/.ssh/authorized_keys"
+  with_items: "{{ systemusers }}"
+  notify: remove temp ssh folder
