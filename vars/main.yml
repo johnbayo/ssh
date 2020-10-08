@@ -7,7 +7,7 @@ systemgroups:
   - { name: 'users', gid: '401' }
 
 # by default two groups were created as shown above, only users in admin group have sudo rights
-# user in mmsdev group can be created by changing the group name to users
+# user in users group can be created by changing the group name to users
 systemusers:
   - { name: 'test', group: 'admin', comment: 'Testing admin permissions' }
   - { name: 'normaluser', group: 'users', comment: 'Testing non admin permissions' }
