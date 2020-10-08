@@ -39,7 +39,7 @@
 - name: enable admin group sudo access
   lineinfile:
     dest: /etc/sudoers.d/91-admin
-    line: "%mms ALL=(ALL) NOPASSWD:ALL"
+    line: "%admin ALL=(ALL) NOPASSWD:ALL"
 
 - name: copying public keys to authorized key files
   copy:
